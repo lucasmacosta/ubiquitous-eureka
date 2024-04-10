@@ -2,8 +2,9 @@ import { Router } from "express";
 
 import checkUser from "../middlewares/check-user";
 import buildValidator from "../middlewares/build-validator";
-import { createTask, getTasks, updateTask } from "../controllers/tasks";
+import tasksController from "../controllers/tasks";
 import {
+  getTasksSchema,
   createTaskSchema,
   updateTaskParamsSchema,
   updateTaskSchema,
@@ -13,13 +14,26 @@ const tasks = Router();
 
 tasks.use(checkUser);
 
-tasks.get("/", getTasks);
-tasks.post("/", buildValidator("body", createTaskSchema), createTask);
+tasks.get(
+  "/",
+  buildValidator("query", getTasksSchema),
+  tasksController.getTasks.bind(tasksController)
+);
+tasks.post(
+  "/",
+  buildValidator("body", createTaskSchema),
+  tasksController.createTask.bind(tasksController)
+);
 tasks.put(
   "/:id",
   buildValidator("params", updateTaskParamsSchema),
   buildValidator("body", updateTaskSchema),
-  updateTask
+  tasksController.updateTask.bind(tasksController)
+);
+tasks.post(
+  "/:id/archive",
+  buildValidator("params", updateTaskParamsSchema),
+  tasksController.archiveTask.bind(tasksController)
 );
 
 export default tasks;

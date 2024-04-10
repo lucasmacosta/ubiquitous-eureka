@@ -1,24 +1,18 @@
 import { Request, Response } from "express";
 
 import { CreateUserDto } from "./dto/users";
-import { User } from "../models/User";
-import ApiError from "../lib/api-error";
+import usersService, { UsersService } from "../services/users";
 
-export async function createUser(req: Request, res: Response) {
-  const body = res.locals.validated.body as CreateUserDto;
+class UsersController {
+  constructor(private usersService: UsersService) {}
 
-  try {
-    const user = await User.create(body);
+  async createUser(req: Request, res: Response) {
+    const body = res.locals.validated.body as CreateUserDto;
+    console.log(this, this.usersService);
+    const user = await this.usersService.create(body);
 
     res.status(201).json(user);
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      error.name === "SequelizeUniqueConstraintError"
-    ) {
-      throw new ApiError("User already exists", "badRequest");
-    }
-
-    throw error;
   }
 }
+
+export default new UsersController(usersService);
