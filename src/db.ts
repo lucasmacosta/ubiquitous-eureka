@@ -5,6 +5,7 @@ const sequelize = new Sequelize({
   dialect: "sqlite",
   storage: ":memory:",
   models: [__dirname + "/models"],
+  logging: process.env.NODE_ENV !== "test",
 });
 
 export default sequelize;

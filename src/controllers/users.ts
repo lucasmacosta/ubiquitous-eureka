@@ -8,7 +8,7 @@ class UsersController {
 
   async createUser(req: Request, res: Response) {
     const body = res.locals.validated.body as CreateUserDto;
-    console.log(this, this.usersService);
+
     const user = await this.usersService.create(body);
 
     res.status(201).json(user);

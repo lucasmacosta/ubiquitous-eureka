@@ -18,7 +18,7 @@ export class TasksController {
 
     const tasks = await this.tasksService.getTasks(query, user);
 
-    res.status(201).json(tasks);
+    res.status(200).json(tasks);
   }
 
   async createTask(req: Request, res: Response) {
