@@ -4,7 +4,7 @@ This file documents the proposed solution for the [Every.io BE challenge](https:
 
 # Configuration
 
-Run the `npm install` command to install dependencies. On Linux it works out of the box, on MacOS I had to use Node.js 18 and run the `npm config set python "$(which python3)"` command first before I was able to compile the sqlite dependency. In order to install that Node.js version the command `nvm install` can be used at the root of the repo, provided you are using `nvm` to manage Node.js versions.
+Run the `npm install` command to install dependencies. On Linux it works out of the box, on MacOS I had to use Node.js 20 and run the `npm config set python "$(which python3)"` command first before I was able to compile the sqlite dependency. In order to install that Node.js version the command `nvm install` can be used at the root of the repo, provided you are using `nvm` to manage Node.js versions.
 
 # Running the API in dev mode
 
@@ -22,13 +22,13 @@ After build, the API can be started with the `npm start` command.
 
 The API can be built as a container using the docker command as follows to build the `tasks:latest` tag:
 
-```
-docker run tasks:latest
+```shell
+docker buildx build . -t tasks:latest
 ```
 
 Once the image is built, a container can be run using this command to expose the API on port 3000:
 
-```
+```shell
 docker run --rm --publish 3000:3000 tasks:latest
 ```
 
@@ -44,7 +44,7 @@ The following endpoints are available:
 
 Allows to create a user, request is as follows:
 
-```
+```curlrc
 curl --location 'localhost:3000/users' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -54,7 +54,7 @@ curl --location 'localhost:3000/users' \
 
 It returns the newly created user, like this
 
-```
+```json
 {
     "id": 1,
     "username": "user",
@@ -67,7 +67,7 @@ It returns the newly created user, like this
 
 Allows to create a task, request is as follows:
 
-```
+```curlrc
 curl --location 'localhost:3000/tasks' \
 --header 'x-user-id: 1' \
 --header 'Content-Type: application/json' \
@@ -79,7 +79,7 @@ curl --location 'localhost:3000/tasks' \
 
 Notice that the header `x-user-id` must be set with the user id. It returns the newly created task, like this
 
-```
+```json
 {
     "state": "todo",
     "id": 1,
@@ -95,7 +95,7 @@ Notice that the header `x-user-id` must be set with the user id. It returns the 
 
 Allows to update a task, request is as follows:
 
-```
+```curlrc
 curl --location --request PUT 'localhost:3000/tasks/1' \
 --header 'x-user-id: 1' \
 --header 'Content-Type: application/json' \
@@ -106,7 +106,7 @@ curl --location --request PUT 'localhost:3000/tasks/1' \
 
 Again, the `x-user-id` must be set with the user id. Possible values for `state` are the following: `["todo", "inProgress", "done"]`. It returns the updated task, like this
 
-```
+```json
 {
     "state": "inProgress",
     "id": 1,
@@ -122,14 +122,14 @@ Again, the `x-user-id` must be set with the user id. Possible values for `state`
 
 Allows to archive a task, request is as follows:
 
-```
+```curlrc
 curl --location --request POST 'localhost:3000/tasks/2/archive' \
 --header 'x-user-id: 2'
 ```
 
 Again, the `x-user-id` must be set with the user id. The task should not be already on `archived` state. It returns the updated task, like this
 
-```
+```json
 {
     "state": "archived",
     "id": 1,
@@ -145,14 +145,14 @@ Again, the `x-user-id` must be set with the user id. The task should not be alre
 
 Returns the list of tasks for the user, request is as follows:
 
-```
+```curlrc
 curl --location 'localhost:3000/tasks?includeArchived=true' \
 --header 'x-user-id: 1'
 ```
 
 Again, the `x-user-id` must be set with the user id. Archived tasks are not returned by default, this can be overriden with the `includeArchived=true` query param. It returns the list of tasks, like this
 
-```
+```json
 [
     {
         "state": "todo",
